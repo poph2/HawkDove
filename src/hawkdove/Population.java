@@ -16,6 +16,8 @@ public class Population {
     
     ArrayList<Bird> birds;
     
+    ArrayList<Census> censusArray;
+    
     double disease;
     
     int maxPopulation, count, hawkCount, doveCount;
@@ -23,19 +25,11 @@ public class Population {
     public static void main(String args[]) {
         Population p = new Population(10000);
         
-        p.printBirds();
-        
-        for(int i = 0; i < 10000; i++) {
-            p.populationFight();
-            //p.printBirds();
-            
-            p.clearExperience();
-
-            p.generateBirds();
-            p.printBirds();
-        }
+        p.runLife();
         
     }
+    
+    
 
     public Population(int count) {
         this.disease = 0.0;
@@ -45,8 +39,22 @@ public class Population {
         this.doveCount  = 0;
         
         birds = new ArrayList<>();
+        censusArray = new ArrayList<>();
         
         generateBirds();
+    }
+    
+    public void runLife() {
+        for(int i = 0; i < count; i++) {
+            populationFight();
+            //p.printBirds();
+            
+            clearExperience();  
+            //You need to clear their experience so that they can all be on a level field for the next round of life
+
+            generateBirds();
+            //printBirds();
+        }
     }
     
     public void generateBirds() {
@@ -54,9 +62,23 @@ public class Population {
             birds.add(new Bird(getRandomBirdType()));
         }
         count = birds.size();
+        
+        censusArray.add(new Census(count, hawkCount, doveCount));
     }
     
     public String getRandomBirdType() {
+        
+        int generation = censusArray.size();
+        
+        disease = 0.0;
+        
+//        if(censusArray.size() > 2000 && censusArray.size() <= 3000) {
+//            disease = 0.2;
+//        }
+//        else if(censusArray.size() > 1500 && censusArray.size() <= 1500) {
+//            disease = 0.4;
+//        }
+        
         double rand = Math.random();
         
         if(rand < (0.5 - disease)) {
@@ -183,10 +205,12 @@ public class Population {
     
     public void printBirds() {
         
+        Census census = censusArray.get(censusArray.size()-1);
+        
         System.out.println();
-        System.out.println("Population - " + count);
-        System.out.println("Hawk - " + hawkCount + " - " + Math.round(hawkCount*100.0/(double)count) + "%");
-        System.out.println("Dove - " + doveCount + " - " + Math.round(doveCount*100.0/(double)count) + "%");
+        System.out.println("Population - " + census.count);
+        System.out.println("Hawk - " + census.hawkCount + " - " + Math.round(census.hawkCount*100.0/(double)census.count) + "%");
+        System.out.println("Dove - " + census.doveCount + " - " + Math.round(census.doveCount*100.0/(double)census.count) + "%");
         
         for(int i = 0; i < birds.size(); i++) {
             

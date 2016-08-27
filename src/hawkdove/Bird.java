@@ -31,9 +31,11 @@ public class Bird {
     }
     
     public boolean getDeath() {
-        double minResourcePerContest = 0.5/5.0;
+        double minResourcePerContest = 0.5/1.0;
         
-        if(resourcePerContest < minResourcePerContest) {
+        double randomDeath = Math.random();
+        
+        if(resourcePerContest < minResourcePerContest && randomDeath < 0.025) {
             return true;
         }
         return false;

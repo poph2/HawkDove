@@ -17,6 +17,7 @@ package hawkdove;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Random;
 import javax.swing.Timer;
 
@@ -39,34 +40,34 @@ import org.jfree.ui.RefineryUtilities;
  * {@link XYDataset}.
  *
  */
-public class LineChartDemo1 extends ApplicationFrame {
+public class LineChart extends ApplicationFrame {
     
-    double minX, maxX;
+    //double minX, maxX;
 
     /**
      * Creates a new demo.
      *
      * @param title  the frame title.
      */
-    public LineChartDemo1(final String title) {
+    public LineChart(final String title, Population p) {
 
         super(title);
         
-        minX = 0.0;
-        maxX = 100.0;
+//        minX = 0.0;
+//        maxX = 100.0;
         
-        final Timer t = new Timer(1000, new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {   
-                updateChart();
-            }
-        });
-        t.start();
+//        final Timer t = new Timer(1000, new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {   
+//                updateChart();
+//            }
+//        });
+//        t.start();
 
-        final XYDataset dataset = createDataset();
+        final XYDataset dataset = createDataset(p);
         final JFreeChart chart = createChart(dataset);
         final ChartPanel chartPanel = new ChartPanel(chart);
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+        chartPanel.setPreferredSize(new java.awt.Dimension(750, 400));
         setContentPane(chartPanel);
 
     }
@@ -104,7 +105,7 @@ public class LineChartDemo1 extends ApplicationFrame {
         series3.add(0, n3);
         
         
-        for(double i = 1.0; i < maxX; i++) {
+        for(double i = 1.0; i < 1000; i++) {
             series1.add(i, n1 + (10*Math.random()));
             series2.add(i, n2 + (10*Math.random()));
             series3.add(i, 0);
@@ -118,6 +119,35 @@ public class LineChartDemo1 extends ApplicationFrame {
         return dataset;
         
     }
+    
+    private XYDataset createDataset(Population p) {
+        
+        ArrayList<Census> censusArray = p.censusArray;
+        
+        double n1 = 100;
+        double n2 = 120;
+        double n3 = 70;
+        
+        final XYSeries series1 = new XYSeries("Hawk");
+        series1.add(0, censusArray.get(0).hawkPercent);
+
+        final XYSeries series2 = new XYSeries("Dove");
+        series2.add(0, censusArray.get(0).dovePercent);
+        
+        
+        for(double i = 1.0; i < censusArray.size(); i++) {
+            series1.add(i, censusArray.get((int)i).hawkPercent);
+            series2.add(i, censusArray.get((int)i).dovePercent);
+        }
+
+        final XYSeriesCollection dataset = new XYSeriesCollection();
+        dataset.addSeries(series1);
+        dataset.addSeries(series2);
+                
+        return dataset;
+        
+    }
+    
     
     public int randInt(int min, int max) {
         Random rand = new Random();
@@ -138,9 +168,9 @@ public class LineChartDemo1 extends ApplicationFrame {
         
         // create the chart...
         final JFreeChart chart = ChartFactory.createXYLineChart(
-            "Line Chart Demo 6",      // chart title
-            "Era",                      // x axis label
-            "Population",                      // y axis label
+            "Hawk-Dove Game",      // chart title
+            "Generation",                      // x axis label
+            "Population %",                      // y axis label
             dataset,                  // data
             PlotOrientation.VERTICAL,
             true,                     // include legend
@@ -194,8 +224,11 @@ public class LineChartDemo1 extends ApplicationFrame {
      * @param args  ignored.
      */
     public static void main(final String[] args) {
+        
+        Population p = new Population(4000);
+        p.runLife();
 
-        final LineChartDemo1 demo = new LineChartDemo1("Line Chart Demo 6");
+        final LineChart demo = new LineChart("Hawk-Dove Game", p);
         demo.pack();
         RefineryUtilities.centerFrameOnScreen(demo);
         demo.setVisible(true);
